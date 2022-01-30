@@ -10,11 +10,10 @@
                             @close="selectedBlock.selected=false"
                            class="tools"
                                 
-                             
 
 
                         >
-                            <div   @mouseover="block_delete_active=false">
+                            <div   @mouseover="set_block_delete_active(false)">
                                 <div  >
                                     <div class="mb-2">
                                         <v-btn @click.prevent="copy_block(selectedBlock)" x-small color="primary">Копировать</v-btn>
@@ -158,7 +157,7 @@
                                 <hr>
 
                                 <div>
-                                    <div class="mt-2 mb-1"><b>Надпись в блоке:</b></div>
+                                    <div class="mt-2 mb-1"><b>Надпись в блоке: {{block_delete_active}}</b></div>
                                         <div class="ml-2">
                                             <textarea v-model="selectedBlock.text" @input="rerender_all"  placeholder="введите слово или фразу"></textarea>
 
@@ -227,7 +226,7 @@
     export default {
         components: {  DialogDrag },
         name: 'tools',
-        props:['selectedBlock','rerender_all','width','height','copy_block','delete_block'],
+        props:['selectedBlock','rerender_all','width','height','copy_block','delete_block','set_block_delete_active','block_delete_active'],
         data(){
             return {
                 tool_drag_options:{ 
@@ -242,7 +241,7 @@
         methods:{
             drag_end(e){
                 this.tool_drag_options.x=e.x, this.tool_drag_options.y=e.y
-                console.log('drag end:',e)
+                this.set_block_delete_active(false)
                 this.tool_drag_options.height=500
             },
         },

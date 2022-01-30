@@ -24,9 +24,12 @@ export const render_rect=(canvas, ctx,block)=>{ // Прорисовка прям
     ctx.save()
     
     if(block.rotate>0){
-        ctx.translate(block.x,block.y)
+        //ctx.translate(block.x,block.y)
+        let cx=block.x+block.width/2, cy=block.y+block.height/2
+        ctx.translate(cx,cy)
         ctx.rotate(block.rotate * Math.PI/180)
-        ctx.translate(-block.x, -block.y)
+        //ctx.translate(-block.x, -block.y)
+        ctx.translate(-cx,-cy)
     }
     if(block.rounded){
             //let w=self.width, h=self.height, x=self.x-self.width/2, y=self.y

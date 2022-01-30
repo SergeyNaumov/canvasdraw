@@ -47,28 +47,30 @@ export class MouseTouchTracker {
     canvas.onmousedown = onDown;
     canvas.ontouchend = onUp;
     canvas.onmouseup = onUp;
+    let ctrldown=false
+    
     document.addEventListener('keydown', function(event) {
-          
+          if(event.key==='Control'){
+            ctrldown=true
+          }
+          if(event.key==='c' && ctrldown){
+            self.blockToClicpboard()            
+          }
+          if(event.key==='v' && ctrldown){
+            self.blockFromClicpboard()            
+          }
           if (event.key === "Delete") {
-              if(!self.block_delete_active)
-                return
-  
-              
-              let i=0
-              for(let b of self.block_list){
-                  if(b.selected){
-                      self.block_list.splice(i,1)
-                  }
-                  i++
-  
-              }
-              ctx.clearRect(0, 0, canvas.width, canvas.height);
-              
-              for(let b of self.block_list){
-                  b.render(ctx)
+              if(self.block_delete_active){
+                self.delete_block()
               }
           }
     });
+
+    document.addEventListener('keyup', function(event) {
+      if(event.key==='Control'){
+        ctrldown=false
+      }
+    })
   }
 
 

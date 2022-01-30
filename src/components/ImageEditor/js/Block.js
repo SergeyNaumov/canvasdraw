@@ -177,7 +177,7 @@ export class Block {
         // Текст 
         t.font_bold=attr.font_bold || false
         t.font_italic=attr.font_italic || false
-        t.font_color= attr.font_color || '#000000'
+        t.font_color= attr.font_color || '#ffffff'
         t.font_size=attr.font_size || 46
         t.font_family=attr.font_family || 'Serif'
         t.font_x=this.font_size

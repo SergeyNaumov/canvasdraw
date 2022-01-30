@@ -1,21 +1,17 @@
 <template>
-  
-    <v-row style="width: 100%; height: 100%;">
-
+<div>
+    <crop_tool 
+        :step="step"
+        :setStep="setStep"
+        :imageToCanvas="imageToCanvas"
+    />
+    <v-row style="width: 100%; height: 100%;" v-show="step==3">
+        
         <v-col  cols="12" lg="2" sm="4" md="3" class="col-left mt-4">
-            <template v-if="!img_loaded || img_load_force">
-                Начните с загрузки изображения:<br>
-                <v-file-input @change="loadImg" 
-                    label="выберите изображение"
-                    accept="image/png, image/jpeg"
-                />
-                <!--<input type="file" class="form-control form-control-sm" >-->
-            </template>
-            <template v-else>
-                <v-btn @click.prevent="img_load_force=true" x-small color="primary">загрузить новое фото</v-btn>
-            </template>
 
-
+            <template >
+                <v-btn @click.prevent="step=1" x-small color="primary">загрузить новое фото</v-btn>
+            </template>
                         <Tools
                             :selectedBlock="selectedBlock"
                             :rerender_all="rerender_all"
@@ -23,16 +19,16 @@
                             :height="height"
                             :copy_block="copy_block"
                             :delete_block="delete_block"
+                            :block_delete_active="block_delete_active"
+                            :set_block_delete_active="set_block_delete_active"
                         />
                         
-                        <div v-if="img_loaded" class="mt-2 ml-2">
+                        <div v-if="step==3" class="mt-2 ml-2">
                             <div>
                                 <template v-if="!block_list.length">
                                     Отлично! Теперь, когда изображение загружено, добавьте нужные фигуры:
                                 </template>
-                                <template v-else>
-                                    
-                                </template>
+
                             </div>
                             <v-select 
                                 v-model="selected_figure"
@@ -64,7 +60,7 @@
                                             <v-slider
 
                                                 min="10"
-                                                max="200"
+                                                max="500"
                                                 step="10"
                                                 v-model.number="grid_step"
                                                 @input="rerender_all"
@@ -83,15 +79,17 @@
 
                     
         </v-col>
-        <v-col cols="12" lg="10" sm="8" md="9" style="position: relative;" :style="{'cursor': cursor_style}">
-
+        <v-col cols="12" lg="10" sm="8" md="9" class="mt-5 "  :style="{'cursor': cursor_style,'height': canvas_height}">
+            размер изображения: {{width}}x{{height}}
+            <div style="top: 20px; position: relative;">
             <canvas id="imageCanvas" class="maincanvas" ></canvas>
             <canvas id="canvas_blocks" class="maincanvas" ></canvas>
+            </div>
         </v-col>
 
             
     </v-row>
-  
+</div>
 </template>
 
 <script>
@@ -99,6 +97,8 @@
   import { MouseTouchTracker } from './js/MouseTouchTracker.js';
   import { Block } from './js/Block.js';
   import Tools from './tools/tools.vue'
+  import crop_tool from './crop_tool.vue'
+  
 
   let source_img='' // изображение , которое загружают фоном
   let  canvas, ctx, canvas_img, ctx_img, startX, startY
@@ -106,9 +106,10 @@
   export default {
     
     name: 'ImageEditor',
-    components: {Tools},
+    components: {crop_tool, Tools},
     data(){
         return {
+            step:1, 
             canvases:undefined,         
             show_grid: false,
             grid_step: 100,
@@ -119,9 +120,11 @@
             height:3000,
             
             window_height: window.innerHeight,
+            canvas_height: 500,
             show_canvas:true,
             img_loaded: false,
             img_load_force: false,
+            source_img:'',
             figures:[
                 //{'d':'Блок','v':'block'},
                 {'d':'Прямоугольник','v':'rectangle'},
@@ -136,8 +139,11 @@
             ],
             selected_figure: '',
             block_list:[],
+            block_clipboard:undefined,
             block_delete_active:false, // можно удалять блок клавишей delete (когда находимся в панели инструментов запрещаем, потому что клавиша del в этом случае используется для других целей)
-            cursor_style: ''
+            cursor_style: '',
+            
+
         }
     },
     mounted(){
@@ -145,29 +151,93 @@
         ctx_img = canvas_img.getContext('2d');
         canvas_img.width=this.width, canvas_img.height=this.height
         
-        // канвас для блоков
-        canvas = document.getElementById('canvas_blocks');
-        ctx = canvas.getContext('2d');
-        canvas.width=this.width, canvas.height=this.height
-
-        
-
-        this.canvases={
-            canvas_img: canvas_img,
-            ctx_img: ctx_img,
-            canvas: canvas,
-            ctx: ctx 
-        }
-        
 
         this.start_mtt()
+
         
-        //this.selected_figure='arrow'
-        //this.draw()
+
+    },
+    watch:{
+
+        step(){
+            
+            if(this.step==3){
+                this.$nextTick(
+                    ()=>{
+                        // копируем картинку в canvas
+                            canvas.width = source_img.width
+                            canvas.height = source_img.height
+
+                            canvas_img.width=source_img.width
+                            canvas_img.height = source_img.height
+
+                            this.width=source_img.width
+                            this.height=source_img.height
+                            ctx_img.drawImage(source_img,0,0)
+                    }
+                )
+            }
+            
+        }
     },
     methods:{
 
+        set_block_delete_active(v){
+            this.block_delete_active=v
+        },
+        imageToCanvas(image){ // Переносим изображение из кропа в нашу рисовалку
+            source_img = new Image();
+            source_img.src=image
+
+            source_img.onload=()=>{
+                canvas.width = source_img.width
+                canvas.height = source_img.height
+
+                canvas_img.width=source_img.width
+                canvas_img.height = source_img.height
+
+                this.width=source_img.width
+                this.height=source_img.height
+                ctx_img.drawImage(source_img,0,0)
+                this.block_list=[]
+                this.img_loaded=true
+                this.img_load_force=false
+            }
+            this.setStep(3)
+        },
+        blockToClicpboard(){
+            let attr={}, b=this.selectedBlock
+            for(let a of b.get_copy_attr()) attr[a]=b[a]
+            this.block_clipboard=attr
+        },
+        blockFromClicpboard(){
+            let attr=this.block_clipboard
+            if(attr){
+                attr.x=this.width/10+this.width /10
+                attr.y=this.height/10+this.height /10
+                
+                let block = new Block(canvas, ctx, attr);
+                block.render(ctx);
+                this.block_list.push(block)                
+            }
+
+        },
         start_mtt(){
+
+
+            // канвас для блоков
+            canvas = document.getElementById('canvas_blocks');
+            ctx = canvas.getContext('2d');
+            canvas.width=this.width, canvas.height=this.height
+
+            
+
+            this.canvases={
+                canvas_img: canvas_img,
+                ctx_img: ctx_img,
+                canvas: canvas,
+                ctx: ctx 
+            }
 
             this.mtt=new MouseTouchTracker(this, ctx, canvas,
                 (evtType, x, y)=>{
@@ -270,10 +340,6 @@
                     }
                     if(need_render_all){
                         this.rerender_all()
-                        /*ctx.clearRect(0, 0, canvas.width, canvas.height);
-                        for(let b of this.block_list){
-                            b.render(ctx)
-                        }*/
                     }
 
                 }
@@ -281,43 +347,8 @@
             
             
         },
-        loadImg(e){
-            this.show_canvas=true
-            this.$nextTick(
-                ()=>{
-                    let reader = new FileReader();
-                    reader.onload = event=>{
-
-                        source_img = new Image();
-                        source_img.onload = ()=>{
-                            canvas.width = source_img.width
-                            canvas.height = source_img.height
-
-                            canvas_img.width=source_img.width
-                            canvas_img.height = source_img.height
-
-                            this.width=source_img.width
-                            this.height=source_img.height
-                            ctx_img.drawImage(source_img,0,0)
-                            this.block_list=[]
-                            this.img_loaded=true
-                            this.img_load_force=false
-
-                        }
-
-                        source_img.src = event.target.result;
-                        this.$nextTick(
-                            ()=>{
-                                this.window_height=window.outerHeight
-                            }
-                        )
-                        
-                    }
-                    reader.readAsDataURL(e);
-                }
-            )
-
-            
+        setStep(v){
+            this.step=v
         },
         draw_greed(){
             if(this.show_grid){
@@ -325,7 +356,7 @@
                 
                 
                 // grid_step
-                let step=this.grid_step*k
+                let step=this.grid_step // *k
                 let x1=0,x2=canvas.width,y1=0,y2=canvas.height
                 ctx.beginPath();
                 
@@ -335,7 +366,6 @@
                     ctx.moveTo(x1,y1)
                     ctx.lineTo(x2,y1)
                     y1+=step
-                    //console.log(x1,y1,x1,y2)
                 }
                 
                 
@@ -358,7 +388,6 @@
             }
         },
         draw(){
-            //console.log(this.selected_figure)
             {
                 let attr={
                     x:this.width/10+this.width /10,
@@ -413,9 +442,9 @@
             attr.x=this.width/10+this.width /10
             attr.y=this.height /10+this.height /10
             
-            let rectangle = new Block(canvas, ctx, attr);
-            rectangle.render(ctx);
-            this.block_list.push(rectangle)
+            let block = new Block(canvas, ctx, attr);
+            block.render(ctx);
+            this.block_list.push(block)
             
         },
         delete_block(){
@@ -427,11 +456,7 @@
                 i++
 
             }
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            for(let b of this.block_list){
-                b.render(ctx)
-            }
+            this.rerender_all()
         },
         moveBlockTop(){
             let new_list=[]
@@ -461,7 +486,12 @@
         },
         max_tool_height(){
             return window.innerHeight-50
-        }
+        },
+        
+
+
+
+
     }
   }
 </script>
@@ -475,7 +505,8 @@
     }
     .maincanvas {
         max-width: 100%;
-        max-height: 100%;
+        max-height: 800px;
+        
         border:  1px solid rgb(128, 128, 128);
         position:  absolute; left: 0; top: 0;
     }
@@ -485,5 +516,5 @@
     .canvas_blocks{
         z-index: 1;
     }
-
+    .v-application .error {color: red; background: #fff !important;}
 </style>
