@@ -116,8 +116,11 @@ export default({
     },
     watch:{
         selected_marketplace(){
-            this.selected_marketplace.size=this.selected_marketplace.sizes[0]
-            this.calc_crop_canvas(this.selected_marketplace.size)
+            if(this.selected_marketplace){
+                this.selected_marketplace.size=this.selected_marketplace.sizes[0]
+                this.calc_crop_canvas(this.selected_marketplace.size)
+            }
+
         },
     },
     methods:{
@@ -143,9 +146,6 @@ export default({
                         this.crop_img = new Image();
                         this.crop_img.src = event.target.result
                         this.width=this.crop_img.width, this.height=this.crop_img.height
-
-                        console.log(`${this.width}x${this.height}`)
-
                         this.setStep(2)
                         this.$nextTick(
                             ()=>{
@@ -192,6 +192,8 @@ export default({
                 handlers: {},
                 movable: true,
                 resizable: true,
+                minWidth:0,
+                maxHeight:0
                 //aspectRatio: false
             }
 
@@ -199,16 +201,16 @@ export default({
                 
                 mp=size
                 if(mp && mp.min_height){
-                    c.minHeight=mp.min_height
+                    //c.minHeight=mp.min_height
                 }
                 if(mp && mp.max_height){
-                    c.maxHeight=mp.max_height
+                    //c.maxHeight=mp.max_height
                 }
                 if(mp && mp.min_width){
-                    c.minWidth=mp.min_width
+                    //c.minWidth=mp.min_width
                 }
                 if(mp && mp.max_width){
-                    c.maxWidth=mp.max_width
+                    //c.maxWidth=mp.max_width
                 }
                 if(mp && mp.height){
                     c.height=mp.height

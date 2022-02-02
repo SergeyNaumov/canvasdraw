@@ -7,8 +7,6 @@ export const marketplace_list=[
         size:'',
         sizes:[
             {
-                min_width:1200, 
-                min_height: 1500,
                 width:1200,height:1500,header:'косметика, парфюмерия, товары для красоты, ювелирные изделия (1200x1500)'
             },
             {
@@ -45,8 +43,8 @@ export const marketplace_list=[
         src:'https://cdn1.ozone.ru/s3/cms/15/t4f/wc200/logo-logo-ozon-blue-png_1.png',
         size:0,
         sizes:[{
-                min_width: '900',
-                min_height: '1200',
+                width: '900',
+                height: '1200',
                 header:'рекомендуемый размер (900x1200)'
         }],
         body: `
@@ -68,11 +66,12 @@ export const marketplace_list=[
                 header:'пропорции 1x1 от 800x800 до 1000x1000',
                 width:1,
                 height:1,
-
+/*
                 min_width: 800,
                 min_height: 800,
                 max_width: 1000,
                 max_height: 1000
+*/
             }
         ],
         body: `
