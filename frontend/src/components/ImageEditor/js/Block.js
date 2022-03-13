@@ -159,7 +159,7 @@ export class Block {
             t.lineWidth=4
         }
         else{
-            t.text = attr.text || ''
+            t.text = attr.text || 'Текст'
         }
 
         // закруглённые края

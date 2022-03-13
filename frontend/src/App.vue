@@ -1,53 +1,38 @@
-/* eslint-disable vue/no-unused-components */
 <template>
-  <v-app>
-    <v-navigation-drawer
-      app
-      left
-      absolute
-      temporary
-      v-model="drawer"
-    >
-      <v-list-item-group>
-        
-        <v-list-item>
-          <v-list-item-title>
-            Здесь будет какое-то<br> меню для фоток
-          </v-list-item-title>
-        </v-list-item>
-        
-      </v-list-item-group>
-    </v-navigation-drawer>
-    <v-app-bar
-      app
-      color="primary"
-    >
-      <v-app-bar-nav-icon @click="drawer = !drawer">
-      </v-app-bar-nav-icon>
-      <v-app-bar-title>
-        <h3 class="text-h4 white--text">Image marketplace editor</h3>
-      </v-app-bar-title>
-    </v-app-bar>
-    <v-main>
-      <ImageEditor/>
-    </v-main>
-  </v-app>
+  <div>
+     <router-view></router-view>
+  </div>
+
 </template>
 <script>
 
-import ImageEditor from './components/ImageEditor/index.vue'
 
+import {fetchInit, httpGet} from './javascript/fetch.js' // ,httpPost
 export default {
   name: 'App',
 
-  components: {
 
-    ImageEditor
-  },
 
   data: () => ({
-    drawer:false
+   
   }),
+  created(){
+    this.init()
+  },
+  methods:{
+    init(){
+      fetchInit(this)
+      httpGet(
+        {
+          url:'/',
+          success: (d)=>{
+            this.$router.push('/lk')
+            console.log('d: ',d)
+          }
+        }
+      )
+    }
+  }
 };
 </script>
 <style>

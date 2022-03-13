@@ -1,4 +1,3 @@
-module.exports = {
-    publicPath: './',
-    //VUE_APP_BACKEND_BASE: '/CrmFresh/backend'
+export const config={
+    baseURL: 'http://localhost:5000'
 }

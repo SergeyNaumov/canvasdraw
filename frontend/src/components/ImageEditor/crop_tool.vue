@@ -1,12 +1,40 @@
 <template>
     <div>
-        <div v-if="step==1" class="load_image_block">
+        <div v-if="step==1" class="load_image_block mt-1">
                 
-                    для начала выберите изображение:<br>
-                    <v-file-input @change="loadImgToCrop" 
-                        label="выберите изображение"
-                        accept="image/png, image/jpeg"
-                    />
+                    <div style="text-align: center;" class="mb-3">
+                        
+                        <img src="/img/octopus.svg"><br>
+                        Добавьте изображение одним из способов:
+                    </div>
+                    <v-row>
+                        <v-col  cols="12" md="4">
+                            
+                            <div class="mt-5 " cols="12"  md="4">
+                                изображение из Вашей папки:
+                                <v-file-input @change="loadImgToCrop" 
+                                    label="выбрать"
+                                    accept="image/png, image/jpeg"
+                                />
+                            </div>
+                        </v-col>
+                        <v-col  cols="12" md="4">
+                        <div class="mt-5" >
+                            ИЛИ
+                        </div>
+                        </v-col>
+                        <v-col  cols="12" md="4">
+                        <div class="mt-5" >
+                           изображение из буфера обмена:
+                            <div>
+                                <v-btn small class="mt-2 mb-2">вставить</v-btn>
+                                
+                            </div>
+                            (или нажмите CTRL+V)
+                        </div>
+                        </v-col>
+                    </v-row>
+
 
 
 
@@ -75,6 +103,11 @@
                             ref="cropper"
                         />
                     </template>
+                    <template v-else>
+                        <div class="mt-10 pl-10">
+                            Отлично!, теперь выберите площадку, на которой хотите разместить фото товара
+                        </div>
+                    </template>
                 </v-col>
                 
             </v-row>
@@ -129,6 +162,7 @@ export default({
             let image
             {
                 const { coordinates, canvas, } = this.$refs.cropper.getResult();
+                console.log('canvas:',[coordinates, canvas])
                 this.coordinates = coordinates;
                 image=canvas.toDataURL()
             }
@@ -236,13 +270,16 @@ export default({
 <style scoped>
     .load_image_block{
         text-align: center;
+        max-width: 800px;
         color: rgb(128, 128, 128);
         vertical-align: middle;
-        width: 300px;
+        margin-left: 200px;
+        text-align: center;
         height: 100%;
-        margin-top: 10%;
-        margin-left: calc( 50% - 150px);
+        
+        
     }
+    .load_image_block img {height: 250px;}
     .v-application .error {color: red; background: #fff !important;}
     .img_info{ 
         margin-bottom: 20px;
@@ -251,6 +288,11 @@ export default({
         
         padding: 10px;
         background-color: #ece9e9;
+    }
+    @media (max-width: 1000px) {
+        .load_image_block{
+            margin: 0 20px;
+        }
     }
 </style>
 

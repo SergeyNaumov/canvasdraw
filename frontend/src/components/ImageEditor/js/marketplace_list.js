@@ -64,8 +64,8 @@ export const marketplace_list=[
         sizes:[
             {
                 header:'пропорции 1x1 от 800x800 до 1000x1000',
-                width:1,
-                height:1,
+                width:1000,
+                height:1000,
 /*
                 min_width: 800,
                 min_height: 800,

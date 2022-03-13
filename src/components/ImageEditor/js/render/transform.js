@@ -1,1 +1,0 @@
-https://learntutorials.net/ru/html5-canvas/topic/5494/%D1%82%D1%80%D0%B0%D0%BD%D1%81%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%86%D0%B8%D0%B8
