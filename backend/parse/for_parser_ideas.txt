@@ -1,0 +1,24 @@
+https://financemarker.ru/stocks/MOEX/GAZP -- финансовые показатели
+
+https://ycharts.com/companies/SBRCY/pe_ratio -- Свежее p/e
+
+https://www.moex.com/ru/issue.aspx?board=TQBR&code=SBER -- инфа с мосбиржи
+
+https://iss.moex.com/iss/engines/stock/markets/shares/boards/TQBR/securities/SBER.jsonp?iss.meta=off&iss.only=marketdata&lang=ru&_=1631129158368 -- проанализировать
+
+p/e=eps/цена акции
+
+
+https://finbull.ru/stock/BABA/
+
+https://ycharts.com/companies/BABA -- показатели
+
+
+https://ycharts.com/charts/fund_data.json?securities=id%3ABABA%2Cinclude%3Atrue%2C%2C&calcs=id%3Aprice%2Cinclude%3Atrue%2C%2C&correlations=&format=real&recessions=false&zoom=1&startDate=&endDate=&chartView=&splitType=&scaleType=&note=&title=&source=&units=&quoteLegend=&partner=&quotes=&legendOnChart=&securitylistSecurityId=&displayTicker=&ychartsLogo=&useEstimates=&maxPoints=669 -- 
+
+
+
+API
+
+Token for sandbox:
+t.4ML13XCD3pMElHdyZFgZcu02Utmh6-nMeTN57cc9WzUFiymE9kD4JP8TxKZN5LpswLFbr7rCPOPUQEnLCVqs3Q
