@@ -1,6 +1,7 @@
 
 export const marketplace_list=[
     {
+        id: 1,
         header:'Ozon',
         name: "ozon",
         src:'https://cdn1.ozone.ru/s3/cms/15/t4f/wc200/logo-logo-ozon-blue-png_1.png',
@@ -24,6 +25,7 @@ export const marketplace_list=[
             </p>` 
     },
     {
+        id: 2,
         header:'KazanExpress',
         name: "kazanexpress",
         src:'https://cdn1.ozone.ru/s3/cms/15/t4f/wc200/logo-logo-ozon-blue-png_1.png',
@@ -38,6 +40,7 @@ export const marketplace_list=[
             </p>` 
     },
     {
+        id: 3,
         header:'Wildberries',
         name: "wildberries",
         src:'https://cdn1.ozone.ru/s3/cms/15/t4f/wc200/logo-logo-ozon-blue-png_1.png',
@@ -45,6 +48,8 @@ export const marketplace_list=[
         sizes:[{
                 width: '900',
                 height: '1200',
+                min_width: '900',
+                min_height: '1200',
                 header:'рекомендуемый размер (900x1200)'
         }],
         body: `
@@ -57,6 +62,7 @@ export const marketplace_list=[
             </p>` 
     },
     {
+        id: 4,
         header:'AliExpress',
         name: "aliexpress",
         src:'https://cdn1.ozone.ru/s3/cms/15/t4f/wc200/logo-logo-ozon-blue-png_1.png',
@@ -66,12 +72,12 @@ export const marketplace_list=[
                 header:'пропорции 1x1 от 800x800 до 1000x1000',
                 width:1000,
                 height:1000,
-/*
+
                 min_width: 800,
                 min_height: 800,
                 max_width: 1000,
                 max_height: 1000
-*/
+
             }
         ],
         body: `

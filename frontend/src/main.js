@@ -5,8 +5,17 @@ import VueRouter from 'vue-router'
 import { router }  from './router' 
 
 
+import '@mdi/font/css/materialdesignicons.css';
+
+
+import { http } from './http.js'
+Vue.prototype.$http = http 
+
+
 
 Vue.config.productionTip = false
+
+
 
 Vue.use(VueRouter);
 

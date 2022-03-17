@@ -42,18 +42,21 @@ class Engine():
       if hostname in config['debug']['hosts']:
         self.manager=db.getrow(
           table="manager",
-          select_fields="id,login",
+          select_fields="*",
           where="id=%s",
           values=[config['debug']['manager_id']]
         )
+
         if self.manager:
+          del self.manager['password']
           self.login=self.manager['login']
         else:
           self.manager={'id':config['debug']['manager_id'],'name':'менеджер не найден'}
       else:
         #print('session start')
         session_start(self,encrypt_method=config['encrypt_method']);
-
+    else:
+      print('not need login!')
             
             
       

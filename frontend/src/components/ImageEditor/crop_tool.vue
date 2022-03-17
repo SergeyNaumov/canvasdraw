@@ -65,6 +65,7 @@
                                 :value="m"
                                 v-if="!selected_marketplace || selected_marketplace.name==m.name"
                                 :label="m.header"
+                                
                                 @change="calc_crop_canvas(false)"
                             />
                             <template v-if="selected_marketplace && m.name==selected_marketplace.name">

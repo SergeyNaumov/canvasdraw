@@ -13,12 +13,12 @@ config={
     
     # Доступно без авторизации
     'not_login_access': [
-        '/login','/test/mailsend','/register','/remember/get-access-code','/remember/check-access-code','/remember/change-password'
+        '/login','/auth','/register','/remember/get-access-code','/remember/check-access-code','/remember/change-password'
     ]
   },
   'debug':{ # для отладки
-    'hosts':['!!!sv-home','sv-digital','sv-HP-EliteBook-2570p','asus-tarusa'],
-    'manager_id': 328, # представитель ООО "Ринал"
+    'hosts':['sv-home','sv-digital','sv-HP-EliteBook-2570p','asus-tarusa'],
+    'manager_id': 1,
 
     
   },

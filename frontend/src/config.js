@@ -1,3 +1,3 @@
 export const config={
-  baseURL: 'http://localhost:5000'
+    baseURL: 'http://dev-marketplace.test/backend'
 }

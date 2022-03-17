@@ -7,14 +7,21 @@ export const fetchInit=self=>{
 const httpRequest=opt=>{
     let method=opt.method?opt.method:'GET'
     let cache=opt.cache?opt.cache:'no-cache'
-    //let mode=opt.mode?opt.mode:'cors'
-    console.log('app:',app)
-    console.log('opt2:',opt)
-    fetch(config.baseURL+opt.url,{
-        method: method,
-        cache: cache,
-        //mode: mode  
-    })
+    let options={
+      method: method,
+      cache: cache,
+      mode: 'no-cors'
+    }
+
+    if(opt.data){
+      options.body=JSON.stringify(opt.data)
+      /*options.headers={
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }*/
+    }
+    console.log('options:',options)
+    fetch(config.baseURL+opt.url,options)
     .then((r) => {
       console.log('r:',r)
       r=r.json()
@@ -24,16 +31,25 @@ const httpRequest=opt=>{
   .then((data) => {
       console.log('data:',data)
       if(data.success){
-        
-        if('success' in opt){
-          console.log('type:',typeof(opt.success))
-          if(typeof(opt.success) == 'function' ){
-            opt.success(data.data)
+        if(data.redirect){
+          if(location.pathname != data.redirect){
+            //console.log('redirect',location.href.data.redirect)
+            location.href=data.redirect; //+'?from_url='+encodeURI(location.pathname)
           }
           else{
-            for(let i in data.data){
-              opt.success[i]=data[i]
-            }
+            //console.log('not redirect')
+          }
+        }
+        else if('success' in opt){
+          //console.log('type:',typeof(opt.success))
+
+          if(typeof(opt.success) == 'function' ){
+            opt.success(data)
+          }
+          else{
+            //for(let i in data.data){
+            //  opt.success[i]=data[i]
+            //}
             
           }
         }
@@ -47,7 +63,8 @@ export const httpGet=opt=>{
 }
 
 export const httpPost=opt=>{
-    opt.method='GET'
+    opt.method='POST'
+    
     httpRequest(opt)
 
 }

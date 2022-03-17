@@ -70,8 +70,14 @@
                                 <input type="color" v-model="grid_color" @change="rerender_all" class="color">
 
                             </div>
+                            <block_library 
+                                :loadBlock="loadBlock"
+                                :selectedBlock="selectedBlock"
+                                :block_list="block_list"
+                                :delete_all_blocks="delete_all_blocks"
+                            />
                             <div class="mt-10" v-if="img_loaded && block_list.length">
-                                <v-btn @click.prevent="save_result" x-small color="primary">сохранить изображение</v-btn>
+                                <v-btn @click.prevent="save_result" x-small color="primary">скачать изображение</v-btn>
                             </div>
                         </div>
 
@@ -98,7 +104,8 @@
   import { Block } from './js/Block.js';
   import Tools from './tools/tools.vue'
   import crop_tool from './crop_tool.vue'
-  
+  // блок для сохранения объекта (для дизайнера)
+  import block_library from './block_library.vue'
 
   let source_img='' // изображение , которое загружают фоном
   let  canvas, ctx, canvas_img, ctx_img, startX, startY
@@ -106,7 +113,7 @@
   export default {
     
     name: 'ImageEditor',
-    components: {crop_tool, Tools},
+    components: {crop_tool, block_library, Tools},
     data(){
         return {
             step:1, 
@@ -380,6 +387,10 @@
 
             }
         },
+        delete_all_blocks(){
+            this.block_list=[]
+            this.rerender_all()
+        },
         rerender_all(){
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             this.draw_greed()
@@ -474,6 +485,18 @@
             }
             this.block_list=new_list
 
+        },
+
+        loadBlock(attr){
+            if(typeof(attr)=='string')
+                attr=JSON.parse(attr)
+
+            let block = new Block(canvas, ctx, attr);
+            block.render(ctx);
+            
+            this.block_list.push(block)
+
+
         }
     },
     computed:{
@@ -487,6 +510,8 @@
         max_tool_height(){
             return window.innerHeight-50
         },
+
+
         
 
 

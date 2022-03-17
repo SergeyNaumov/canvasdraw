@@ -54,7 +54,7 @@ def session_create(s,**arg):
   
 
   auth_id=None
-
+  
   if arg['encrypt_method']=='mysql_sha2':
       auth_id=s.db.query(
         query='SELECT '+arg['auth_id_field']+' FROM '+arg['auth_table']+' WHERE '+arg['auth_log_field']+'=%s AND '+arg['auth_pas_field']+'=sha2(%s,256)'+add_where,

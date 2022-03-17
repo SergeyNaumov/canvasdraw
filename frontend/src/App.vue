@@ -7,35 +7,59 @@
 <script>
 
 
-import {fetchInit, httpGet} from './javascript/fetch.js' // ,httpPost
+//import {fetchInit, httpGet} from './javascript/fetch.js' // ,httpPost
+import {config} from '/src/config'
 export default {
   name: 'App',
 
 
 
-  data: () => ({
-   
-  }),
+  data: () => {
+    return {
+      manager:undefined
+    }
+  },
   created(){
     this.init()
   },
   methods:{
     init(){
-      fetchInit(this)
-      httpGet(
-        {
-          url:'/',
-          success: (d)=>{
-            this.$router.push('/lk')
-            console.log('d: ',d)
-          }
+      window.app=this
+      this.$http.get({
+        url: '/',
+        success: d => {
+          this.$router.push('/lk')
+          this.manager=d.manager
+        },
+        error: d=>{
+          //this.$router.push('/login')
+          //location.href='/login'
         }
-      )
+      })
+      // this.$http.get(
+      //   config.baseURL + '/'
+      // ).then(
+      //   r=>{
+      //     console.log('R:',r)
+      //   }
+      // )
+      // fetchInit(this)
+      // httpGet(
+      //   {
+      //     url:'/',
+      //     success: (d)=>{
+      //       this.$router.push('/lk')
+      //       console.log('d: ',d)
+      //     },
+
+      //   }
+      // )
     }
   }
 };
 </script>
 <style>
+.err {color: red;}
 .v-label, .v-input {
   font-size: 12px;
 }

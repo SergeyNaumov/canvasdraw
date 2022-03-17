@@ -6,12 +6,6 @@ from routes import router
 
 # uvicorn main:app --reload --port=7000
 app = FastAPI(Debug=True)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=['http://localhost:8080'], # Allows all origins
-)
-
 @app.middleware("http")
 async def for_all_requests(request: Request,call_next, response=Response):
   response_obj=response()
@@ -40,10 +34,5 @@ async def for_all_requests(request: Request,call_next, response=Response):
     for h in s.headers:
       response.headers[h[0]] = h[1]
 
-  response.headers['Access-Control-Allow-Origin']='http://localhost:8080'
-    #response.headers.append['Access-Control-Allow-Methods','GET, POST, OPTIONS']
-    #response.headers.append['Access-Control-Allow-Headers','DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Set-Cookie']
-    #response.headers.append['Access-Control-Expose-Headers','Content-Length,Content-Range']
-  #print('R:',response.headers)
   return response
 app.include_router(router)
