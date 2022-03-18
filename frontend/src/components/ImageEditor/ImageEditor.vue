@@ -1,16 +1,19 @@
 <template>
 <div>
+    
     <crop_tool 
         :step="step"
         :setStep="setStep"
         :imageToCanvas="imageToCanvas"
+        :block_list="block_list"
     />
     <v-row style="width: 100%; height: 100%;" v-show="step==3">
         
         <v-col  cols="12" lg="2" sm="4" md="3" class="col-left mt-4">
-
             <template >
-                <v-btn @click.prevent="step=1" x-small color="primary">загрузить новое фото</v-btn>
+                <v-btn @click.prevent="step=1" icon><v-icon>mdi-folder-open</v-icon></v-btn>
+                <template>
+                </template>
             </template>
                         <Tools
                             :selectedBlock="selectedBlock"
@@ -25,9 +28,21 @@
                         
                         <div v-if="step==3" class="mt-2 ml-2">
                             <div>
+                                <!--
                                 <template v-if="!block_list.length">
                                     Отлично! Теперь, когда изображение загружено, добавьте нужные фигуры:
                                 </template>
+                                -->
+                                <div>
+                                    <!--
+                                    block_list: {{block_list.length}} ; his_len: {{history.lst.length}} ; his_idx: {{history.idx}}
+                                    <pre>
+                                        {{block_list}}
+                                    </pre>
+                                    -->
+                                </div>
+                                <v-btn icon :disabled="!show_history_undo" @click="history_undo"><v-icon>mdi-arrow-u-left-top</v-icon></v-btn>
+                                <v-btn icon :disabled="!show_history_redo" @click="history_redo"><v-icon>mdi-arrow-u-right-top</v-icon></v-btn>
 
                             </div>
                             <v-select 
@@ -42,8 +57,11 @@
                             />
                             
                             <v-btn  @click.prevent="draw" :disabled="!selected_figure" x-small color="primary">вставить</v-btn>
+
+                            <div class="mt-4 mb-2">
+                                <input type="checkbox" v-model="show_grid" @change="rerender_all">  показать сетку
+                            </div>
                             
-                            <v-checkbox v-model="show_grid" label="показать сетку" @change="rerender_all" class="mt-10"/>
                             <div v-if="show_grid" class="ml-2">
                                 толщина линий ({{grid_width}}):
                                             
@@ -100,6 +118,7 @@
 
 <script>
   //let file_field=document.getElementById('file_field')
+  
   import { MouseTouchTracker } from './js/MouseTouchTracker.js';
   import { Block } from './js/Block.js';
   import Tools from './tools/tools.vue'
@@ -144,6 +163,10 @@
                 {'d':'Звезда','v':'arrow'},
                 
             ],
+            history:{
+                idx:-1,
+                lst:[]
+            },
             selected_figure: '',
             block_list:[],
             block_clipboard:undefined,
@@ -192,7 +215,7 @@
         set_block_delete_active(v){
             this.block_delete_active=v
         },
-        imageToCanvas(image){ // Переносим изображение из кропа в нашу рисовалку
+        imageToCanvas(image,need_save_objects=false){ // Переносим изображение из кропа в нашу рисовалку
             source_img = new Image();
             source_img.src=image
 
@@ -206,9 +229,16 @@
                 this.width=source_img.width
                 this.height=source_img.height
                 ctx_img.drawImage(source_img,0,0)
-                this.block_list=[]
+
+                
                 this.img_loaded=true
                 this.img_load_force=false
+                if(need_save_objects){
+                    this.rerender_all()
+                }
+                else{
+                    this.block_list=[]
+                }
             }
             this.setStep(3)
         },
@@ -271,6 +301,9 @@
                                 need_render_all=true
                                 let point_result=b.resize_point(x,y)
                                 if(point_result || b.isResize){
+                                    if(!b.isResize && point_result){
+                                        this.history_save()
+                                    }
                                     b.isResize=point_result
                                     b.isDragging = false
                                 }
@@ -280,7 +313,8 @@
                                     if(!b.isDragging){
                                         b.isDragging = true
                                         this.block_delete_active=true
-                                        need_block_top=true
+                                        need_block_top=true                       
+                                        this.history_save()
                                     }
                                     
                                     
@@ -300,7 +334,10 @@
                         break;
 
                       case 'up':
+                        let need_record_to_history=false
                         for(let b of this.block_list){
+                            /*if(b.isDragging || b.isResize)
+                                need_record_to_history=true*/
                             b.isDragging=false
                             b.isResize=false
                         }
@@ -356,6 +393,18 @@
         },
         setStep(v){
             this.step=v
+            if(this.step==3 && this.block_list.length){
+                setTimeout(
+                    ()=>{
+                        console.log('rerender_all')
+                        this.rerender_all()
+                    },
+                    500
+                )
+                    
+
+            }
+            
         },
         draw_greed(){
             if(this.show_grid){
@@ -400,6 +449,7 @@
         },
         draw(){
             {
+                this.history_save()
                 let attr={
                     x:this.width/10+this.width /10,
                     y: this.width /10+this.width /10, 
@@ -462,6 +512,7 @@
             let i=0
             for(let b of this.block_list){
                 if(b.selected){
+                    this.history_save()
                     this.block_list.splice(i,1)
                 }
                 i++
@@ -490,6 +541,8 @@
         loadBlock(attr){
             if(typeof(attr)=='string')
                 attr=JSON.parse(attr)
+            
+            this.history_save()
 
             let block = new Block(canvas, ctx, attr);
             block.render(ctx);
@@ -497,9 +550,73 @@
             this.block_list.push(block)
 
 
+        },
+        history_save(){ // сохранение в хистори
+            //History.save(this)
+            console.log('save_history')
+            let saved_block_list=[]
+            //Object.assign(saved_block_list,this.block_list)
+            //saved_block_list.push(block)
+            
+            if(this.history.lst.length-1 > this.history.idx){ // усекаем список истории до указателя
+                this.history.lst=this.history.lst.slice(0,this.history.idx+1)
+            }
+            for(let b of this.block_list){
+                //console.log('b:',b)
+                let attr={x:b.x, y:b.y}
+                for(let a of b.get_copy_attr()){
+                    attr[a]=b[a]
+                }
+                
+                //console.log('attr:',attr)
+                let block=new Block(canvas, ctx, attr)
+                saved_block_list.push(block)
+
+            }
+            //console.log('saved_block_list:',saved_block_list)
+            
+            
+            
+            this.history.lst.push(saved_block_list)
+
+            this.history.lst.slice(this.history.lst-20) // 
+            this.history.idx=this.history.lst.length-1
+            
+        },
+        history_undo(){
+            if(this.show_history_undo){
+                this.history.idx--
+                //console.log('idx:',this.history.idx,'; history_lst:',this.history.lst)
+                
+                this.block_list=this.history.lst[this.history.idx]
+                //console.log('block_list:',this.block_list)
+                
+                this.rerender_all()
+            }
+            
+            //this.history.idx=this.history.lst.length
+            
+        },
+        history_redo(){
+            if(this.show_history_redo){
+                this.history.idx++
+                this.block_list=this.history.lst[this.history.idx]
+                
+                this.rerender_all()
+            }
+
+
         }
     },
     computed:{
+        show_history_undo(){
+            return (this.history.lst.length && this.history.idx>=0)
+            
+        },
+        show_history_redo(){
+            return (this.history.lst.length && this.history.idx<this.history.lst.length-1)
+        },
+
         selectedBlock(){
             for(let b of this.block_list){
                 if(b.selected)

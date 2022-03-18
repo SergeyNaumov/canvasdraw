@@ -31,19 +31,19 @@ export const render_arrow=(canvas, ctx,block)=>{ // Прорисовка пря�
             // координаты нижней части наконечника
             sp_b_x = t_x2 - block.spike_tail,
             sp_b_y = block.y + block.height
-
+/*
             console.log(`
-            t_x1: ${t_x1} t_x2: ${t_x2}
-            t_y1: ${t_y1} t_y2: ${t_y2}
+              t_x1: ${t_x1} t_x2: ${t_x2}
+              t_y1: ${t_y1} t_y2: ${t_y2}
             
-             ${sp_x} ${sp_y}
-            // координаты верхней части наконечника
-            ${sp_t_x}
-            ${sp_t_y}
-            ${sp_b_x}
-            ${sp_b_y}
+              ${sp_x} ${sp_y}
+              // координаты верхней части наконечника
+              ${sp_t_x}
+              ${sp_t_y}
+              ${sp_b_x}
+              ${sp_b_y}
             `)
-
+*/
             ctx.lineWidth = block.lineWidth
             ctx.moveTo(t_x1,t_y1)
             ctx.lineTo(t_x2,t_y1)
@@ -67,8 +67,10 @@ export const render_arrow=(canvas, ctx,block)=>{ // Прорисовка пря�
             //ctx.lineTo(t_x2,t_y2)
             //console.log('line to: ',tail_x2,tail_y2)
             //ctx.lineTo(tail_x2,tail_y2)
-            if(block.need_border)
+            if(block.need_border){
+              ctx.strokeStyle = block.border_color;
               ctx.stroke()
+            }
         if(block.need_fill){
           ctx.fillStyle=convertHex(block.background_color,block.background_opacity)
           //console.log(ctx.fillStyle)

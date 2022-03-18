@@ -1,37 +1,50 @@
 <template>
     <div>
+        
         <div v-if="step==1" class="load_image_block mt-1">
-                
+                    
                     <div style="text-align: center;" class="mb-3">
-                        
-                        <img src="/img/octopus.svg"><br>
-                        Добавьте изображение одним из способов:
+                        <div v-if="block_list.length">
+                            <v-btn class="mb-2 ml-5 mt-4 mb-8" @click="setStep(3)" color="red">вернуться в редактор</v-btn><br>
+                            <img src="/img/octopus.png">
+                        </div>    
+                        <div v-else>
+                            <img src="/img/octopus.png">
+                        </div>
+                        Добавьте изображение одним из способов:<br>
+                        <div class="mt-2"><b>I. Загрузите фото с Вашего устройства"</b></div>
                     </div>
-                    <v-row>
-                        <v-col  cols="12" md="4">
+
+                    <v-row >
+
+                        <v-col  cols="12" md="6" >
                             
-                            <div class="mt-5 " cols="12"  md="4">
-                                изображение из Вашей папки:
+                                
                                 <v-file-input @change="loadImgToCrop" 
                                     label="выбрать"
                                     accept="image/png, image/jpeg"
+
                                 />
-                            </div>
                         </v-col>
-                        <v-col  cols="12" md="4">
-                        <div class="mt-5" >
-                            ИЛИ
+                        <v-col  cols="12" md="6">
+                                <v-checkbox class="ml-4" v-model="need_save_objects" label="Сохранить все существующие объекты"/>
+                        </v-col>
+                    </v-row>
+                    <v-row>
+                        <v-col  cols="12" md="12">
+                        <div class="mt-10" >
+                            <b>II. Вставьте изображение из буфера обмена:</b>
                         </div>
                         </v-col>
-                        <v-col  cols="12" md="4">
-                        <div class="mt-5" >
+                        <v-col  cols="12" md="12" class="mt-5">
+                        
                            изображение из буфера обмена:
                             <div>
                                 <v-btn small class="mt-2 mb-2">вставить</v-btn>
                                 
                             </div>
                             (или нажмите CTRL+V)
-                        </div>
+                        
                         </v-col>
                     </v-row>
 
@@ -122,12 +135,13 @@ import {marketplace_list} from './js/marketplace_list.js'
 //let crop_img=''
 export default({
     name: 'crop_tool',
-    props:['step','setStep','imageToCanvas'],
+    props:['step','setStep','imageToCanvas','block_list'],
 
     components: {Cropper},
     data(){
         return {
             selected_marketplace:undefined,
+            need_save_objects: true,
             marketplace_list:marketplace_list,
             crop_img:'',
             // размеры исходного изображения
@@ -163,11 +177,11 @@ export default({
             let image
             {
                 const { coordinates, canvas, } = this.$refs.cropper.getResult();
-                console.log('canvas:',[coordinates, canvas])
+                
                 this.coordinates = coordinates;
                 image=canvas.toDataURL()
             }
-            this.imageToCanvas(image)
+            this.imageToCanvas(image,this.need_save_objects)
             
 
         },

@@ -1,17 +1,22 @@
 <template>
 <div>
-    <div class="mt-10" >
+    <div>
         <div> Библиотека блоков <a href="" @click.prevent="show_objects_list=!show_objects_list">{{show_objects_list?'скрыть':'показать'}}</a>:</div>
-        <div style="border: 1px solid black; padding: 10px" v-if="show_objects_list">
+        <div class="interface_block" v-if="show_objects_list">
+            <template v-if="objects_list.length">
             <div v-for="(o,idx) in objects_list" :key="idx">             
                 <div class="list_header"><a href="#" @click.prevent="loadBlock(o.object)">{{o.header}}</a></div>
-                <v-icon small @click.prevent="deleteBlock(o.id)">mdi-delete</v-icon>
+                <v-icon small @click.prevent="deleteBlock(o.id)" v-if="make_save_graph">mdi-delete</v-icon>
 
             </div>
+            </template>
+            <template v-else>
+                нет сохранённых блоков
+            </template>
 
             <div class="mt-10" v-if="selectedBlock">
-                <v-btn @click.prevent="step=2" x-small color="primary" v-if="step==1">сохранить в библиотеку</v-btn>
-                <div v-if="step==2">
+                <v-btn @click.prevent="step.object=2" x-small color="primary" v-if="step.object==1">сохранить</v-btn>
+                <div v-if="step.object==2">
                     <div class="success" v-if="success">Объект успешно сохранён</div>
                     <div v-else>
                         <v-text-field v-model="header" label="введите название объекта"/>
@@ -24,22 +29,23 @@
 
     </div>
 
-    <div class="mt-10">
+    <div>
         <div> Библиотека шаблонов <a href="" @click.prevent="show_templates_list=!show_templates_list">{{show_templates_list?'скрыть':'показать'}}</a>:</div>
-        <div style="border: 1px solid black; padding: 10px" v-if="show_templates_list">
+        <div class="interface_block"  v-if="show_templates_list">
             <template v-if="templates_list.length">
                 <div v-for="(t,idx) in templates_list" :key="idx">
                     <div class="list_header"><a href="#" @click.prevent="loadTemplate(t.id)">{{t.header}}</a></div>
-                    <v-icon small @click.prevent="deleteTemplate(t.id)">mdi-delete</v-icon>
+                    <v-icon small @click.prevent="deleteTemplate(t.id)" v-if="make_save_graph">mdi-delete</v-icon>
                 </div>
             </template>
             <template v-else>
                 нет сохранённых шаблонов
+                {{step}}
             </template>
 
-            <div class="mt-10">
-                <v-btn @click.prevent="template_step=2" x-small color="primary" v-if="block_list.length && template_step==1">сохранить в библиотеку</v-btn>
-                <div v-if="template_step==2">
+            <div class="mt-10" v-if="block_list.length">
+                <v-btn v-if="step.template==1" @click.prevent="step.template=2" x-small color="primary" >сохранить</v-btn>
+                <div v-if="step.template==2">
                     <div class="success" v-if="template_success">Шаблон успешно сохранён</div>
                     <div v-else>
                         <v-text-field v-model="header_template" label="введите название шаблона"/>
@@ -69,11 +75,14 @@ export default({
     data(){
         return {
             show_templates_list: false,
-            template_step: 1,
+            //template_step: 1,
             templates_list: [],
             show_objects_list: false,
             objects_list:[],
-            step:1,
+            step:{
+                object:1,
+                template:1
+            },
             success:false,
             template_success:false,
             header:'',
@@ -113,7 +122,7 @@ export default({
                         this.success=true
                         setTimeout(
                             ()=>{
-                                this.success=false, this.step=1, this.header=''
+                                this.success=false, this.step.object=1, this.header=''
                                 this.init_blocks()
                             },1000
                         )
@@ -142,7 +151,7 @@ export default({
                         this.template_success=true
                         setTimeout(
                             ()=>{
-                                this.success=false, this.step=1, this.header_template=''
+                                this.template_success=false, this.step.template=1, this.header_template=''
                                 this.init_templates()
                             },1000
                         )
@@ -188,5 +197,6 @@ export default({
     .list_header{
         display: inline-block; width: calc( 100% - 20px)
     }
+    .interface_block {border: 1px solid gray; padding: 10px; border-radius: 5px; margin-bottom: 10px;}
 </style>
 

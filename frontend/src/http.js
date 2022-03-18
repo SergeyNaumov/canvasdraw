@@ -2,7 +2,7 @@ import axios from "axios";
 import {config} from '/src/config'
 export const http={
     get: opt=>{
-        console.log('request get')
+        //console.log('request get')
         axios.get(
             config.baseURL+opt.url
         ).then(

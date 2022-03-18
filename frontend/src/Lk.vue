@@ -26,7 +26,7 @@
       <v-app-bar-nav-icon @click="drawer = !drawer" color="white">
       </v-app-bar-nav-icon>
       <v-app-bar-title>
-        <div style="color: #fff;"><b>OctopusArt</b> <span>Мастер карточек товаров</span></div>
+        <img src="/img/octopus_head.png" class="octopus_head_logo" align="absmiddle"> <div style="display: inline-block; color: #fff;"> <b>OctopusArt</b> <span>Мастер карточек товаров</span></div>
       </v-app-bar-title>      
 
       
@@ -54,5 +54,5 @@ export default({
 })
 </script>
 <style scoped>
-
+  .octopus_head_logo {width: 50px; height: 50px; display: inline-block; }
 </style>

@@ -146,9 +146,9 @@ export class Block {
         t.selected=false
         t.isResize=false
         t.type=attr.type || 'rectangle' 
-        t.lineWidth=attr.lineWidth || 2
-        t.border_color=attr.border_color || '#0000FF'
-        t.need_border=attr.need_border || true
+        t.lineWidth=attr.lineWidth ?? 2
+       
+        t.need_border=attr.need_border ?? true
         
         if(t.type=='arrow'){ // Доп. параметры для стрелки
 
@@ -164,15 +164,16 @@ export class Block {
 
         // закруглённые края
         t.rounded=attr.rounded || false 
-        t.round_left_top= attr.round_left_top || 50
-        t.round_left_bottom = attr.round_left_bottom || 50
-        t.round_right_top = attr.round_right_top || 50
-        t.round_right_bottom = attr.round_right_bottom || 50
+        t.round_left_top= attr.round_left_top ?? 50
+        t.round_left_bottom = attr.round_left_bottom ?? 50
+        t.round_right_top = attr.round_right_top ?? 50
+        t.round_right_bottom = attr.round_right_bottom ?? 50
       
         // заливка цветом
         t.need_fill = attr.need_fill || true
+        t.border_color=attr.border_color || '#101093'
         t.background_color=attr.background_color || '#101093'
-        t.background_opacity=attr.background_opacity || 0.8
+        t.background_opacity=attr.background_opacity || 1 //0.8
       
         // Текст 
         t.font_bold=attr.font_bold || false
@@ -180,9 +181,9 @@ export class Block {
         t.font_color= attr.font_color || '#ffffff'
         t.font_size=attr.font_size || 46
         t.font_family=attr.font_family || 'Serif'
-        t.font_x=this.font_size
+        t.font_x=attr.font_x ?? t.font_size
         t.font_stroke=false
-        t.font_y=attr.font_y || (this.height / 2 - this.font_size)
+        t.font_y=attr.font_y ?? (this.height / 2 - this.font_size)
         
         t.get_copy_attr=()=>{
             let result=[
