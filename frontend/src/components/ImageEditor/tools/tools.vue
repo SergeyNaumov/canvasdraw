@@ -3,12 +3,12 @@
     
     <dialog-drag
         :title="block_name"
-                            v-if="selectedBlock"
-                            :options="tool_drag_options"
-                            :buttonPin="false"
-                            @drag-end="drag_end"
-                            @close="selectedBlock.selected=false"
-                           class="tools"
+        v-if="selectedBlock"
+        :options="tool_drag_options"
+        :buttonPin="false"
+        @drag-end="drag_end"
+        @close="selectedBlock.selected=false"
+        class="tools"
                                 
 
 
@@ -93,7 +93,7 @@
                                             </table>
                                         </template>
                                         <template v-else>
-                                            <table class="ml-2">
+                                            <table class="ml-2 no-drag">
                                                 <tr>
                                                     <td>Ширина:</td><td><input type="number" class="number3" min="1" :max="width" v-model.number="selectedBlock.width"     
                                                         @input="rerender_all"
@@ -233,7 +233,7 @@
                     buttonPin:false,
                     width:300,top:-30,
                     height: this.max_tool_height,
-                    
+                    filter: '.no-drag',
                     left: (window.innerWidth-320), // отображаем справа
                     x:0,y:0,z:0,id:'drag_tools' },
             }
